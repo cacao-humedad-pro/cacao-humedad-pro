@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#3f2a19"><title>CACAO HUMEDAD PRO</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3eee5;color:#2c241d;font-family:system-ui,Arial,sans-serif}
+header{background:linear-gradient(135deg,#302014,#674323);color:white;text-align:center;padding:24px 16px}
+h1{font-size:24px;margin:0}header p{font-size:14px;color:#f1dfc2;margin:7px 0 0}
+main{max-width:640px;margin:18px auto;padding:0 14px 30px}.card{background:white;padding:18px;border-radius:18px;margin:14px 0;box-shadow:0 5px 18px #3b2b1710}
+h2{font-size:18px;margin:0 0 10px}.muted{font-size:13px;line-height:1.5;color:#6d6257}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+label.pick,button{display:block;border:0;border-radius:12px;padding:13px;text-align:center;font-size:15px;font-weight:650;cursor:pointer}
+.dark{background:#3f2a19;color:white}.light{background:#eee5d8;color:#3f2a19}input[type=file]{display:none}
+#photo{display:none;width:100%;max-height:340px;object-fit:contain;background:#f4f0e9;border-radius:12px;margin-top:10px}
+input[type=number]{width:100%;padding:12px;border:1px solid #d8cfc2;border-radius:10px;font:inherit;margin:6px 0 12px}
+#go{background:#496b3d;color:white;width:100%;margin-top:12px}#go:disabled{opacity:.5}
+#calc{background:#3f2a19;color:white;width:100%;margin-top:8px}
+#status{font-size:14px;line-height:1.5;margin-top:12px}.result{display:none;background:#f5f0e6;border-radius:13px;padding:14px;margin-top:14px}
+.metric{font-size:32px;font-weight:800;color:#496b3d}.tag{font-size:13px;background:#eee5d8;padding:6px 9px;border-radius:20px;display:inline-block;margin:4px 3px 4px 0}
+.alert{background:#fff6e4;border-left:4px solid #d6a64b;border-radius:8px;padding:11px;font-size:13px;line-height:1.5}
+footer{text-align:center;color:#81766b;font-size:12px;padding:12px}
+</style></head>
+<body>
+<header><h1>🍫 CACAO HUMEDAD PRO</h1><p>Reconocimiento visual + cálculo de humedad</p></header>
+<main>
+<section class="card">
+<h2>1. Inspección visual con IA (opcional)</h2>
+<p class="muted">Toma una foto o selecciónala de la galería. La IA reconoce elementos generales de la imagen; no mide humedad.</p>
+<div class="grid">
+<label class="pick dark">📷 Tomar foto<input id="camera" type="file" accept="image/*" capture="environment"></label>
+<label class="pick light">🖼️ Galería<input id="gallery" type="file" accept="image/*"></label>
+</div>
+<img id="photo" alt="Vista previa del cacao">
+<button id="go" disabled>Reconocer imagen con IA</button>
+<div id="status" aria-live="polite">Necesitas internet para descargar el modelo de reconocimiento.</div>
+<div class="result" id="visionResult"><div class="muted">Etiquetas visuales detectadas</div><div id="labels"></div><p id="visual"></p></div>
+</section>
+<section class="card">
+<h2>2. Calcular humedad por pérdida de peso</h2>
+<p class="muted">Este cálculo requiere pesar una muestra de cacao antes del secado y volver a pesarla después de secarla hasta peso constante.</p>
+<label for="wet"><b>Peso inicial del cacao (gramos)</b></label>
+<input id="wet" type="number" min="0.01" step="0.01" placeholder="Ej. 100">
+<label for="dry"><b>Peso después del secado (gramos)</b></label>
+<input id="dry" type="number" min="0.01" step="0.01" placeholder="Ej. 55">
+<button id="calc">Calcular porcentaje de humedad</button>
+<div class="result" id="calcResult">
+<div class="muted">Humedad calculada en base húmeda</div><div class="metric" id="moisture">—</div>
+<div id="loss" class="muted"></div>
+<div id="classification" style="margin-top:12px;font-weight:750;font-size:18px"></div>
+<div id="classDetail" class="muted"></div>
+</div>
+<p class="muted">Fórmula: ((peso inicial − peso seco) ÷ peso inicial) × 100.</p>
+<div class="alert">Ejemplo: si la muestra pesa 100 g antes del secado y 55 g al final, la pérdida de peso es 45%. Este resultado solo representa humedad si el secado elimina el agua y el peso final es estable; otros compuestos volátiles y errores de pesaje pueden afectar el resultado. No introduzcas un peso seco estimado.</div>
+<h3 style="font-size:15px;margin:16px 0 6px">Ajustar rangos de clasificación (%)</h3>
+<p class="muted">Puedes cambiar estos límites según el criterio técnico que utilices. Son valores iniciales orientativos, no una norma oficial.</p>
+<div class="grid">
+<div><label for="limit1"><b>Seco hasta</b></label><input id="limit1" type="number" min="0" step="0.1" value="7.5"></div>
+<div><label for="limit2"><b>Semiseco hasta</b></label><input id="limit2" type="number" min="0" step="0.1" value="8"></div>
+<div><label for="limit3"><b>Húmedo hasta</b></label><input id="limit3" type="number" min="0" step="0.1" value="10"></div>
+</div>
+<p class="muted">Por encima del tercer límite: Muy húmedo.</p>
+</section>
+<section class="card">
+<h2>3. Precisión y uso</h2>
+<div class="alert">La fotografía no permite medir el agua interna del grano. El cálculo por pérdida de peso es un método gravimétrico sencillo, pero requiere procedimiento de secado adecuado. Para control comercial del cacao, usa un medidor calibrado o un método de laboratorio reconocido.</div>
+</section>
+</main><footer>Sin cuenta API · Sin base de datos · La foto se analiza localmente en el navegador</footer>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1"></script>
+<script>
+const camera=document.querySelector('#camera'),gallery=document.querySelector('#gallery'),photo=document.querySelector('#photo'),go=document.querySelector('#go'),statusEl=document.querySelector('#status'),visionResult=document.querySelector('#visionResult');
+let model=null,objectUrl=null;
+function choose(f){if(!f)return;if(!f.type.startsWith('image/')){statusEl.textContent='Elige una imagen válida.';return;}if(f.size>10*1024*1024){statusEl.textContent='La imagen debe pesar menos de 10 MB.';return;}if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(f);photo.src=objectUrl;photo.style.display='block';go.disabled=false;visionResult.style.display='none';statusEl.textContent='Fotografía lista.';}
+camera.onchange=e=>choose(e.target.files[0]);gallery.onchange=e=>choose(e.target.files[0]);
+go.onclick=async()=>{go.disabled=true;visionResult.style.display='none';try{if(!model){statusEl.textContent='Descargando modelo IA…';model=await mobilenet.load({version:2,alpha:1});}statusEl.textContent='Reconociendo imagen…';await photo.decode();const preds=await model.classify(photo,5);document.querySelector('#labels').innerHTML=preds.map(p=>`<span class="tag">${p.className} · ${(p.probability*100).toFixed(1)}%</span>`).join('');document.querySelector('#visual').textContent='Estas etiquetas describen lo que el modelo reconoce. No equivalen a un análisis de humedad.';visionResult.style.display='block';statusEl.textContent='Reconocimiento terminado.';}catch(e){statusEl.textContent='No se pudo cargar el modelo. Revisa internet y vuelve a intentar. '+e.message;}finally{go.disabled=false;}};
+document.querySelector('#calc').onclick=()=>{const wet=Number(document.querySelector('#wet').value),dry=Number(document.querySelector('#dry').value);const box=document.querySelector('#calcResult');if(!Number.isFinite(wet)||!Number.isFinite(dry)||wet<=0||dry<=0){alert('Ingresa dos pesos mayores que cero.');return;}if(dry>wet){alert('El peso después del secado no puede ser mayor que el peso inicial.');return;}const pct=(wet-dry)/wet*100;const a=Number(document.querySelector('#limit1').value),b=Number(document.querySelector('#limit2').value),c=Number(document.querySelector('#limit3').value);if(![a,b,c].every(Number.isFinite)||a<0||!(a<b&&b<c)){alert('Revisa los límites: deben ser números y estar en orden creciente.');return;}let category,detail;if(pct<=a){category='SECO';detail=`Hasta ${a}% según el límite configurado.`;}else if(pct<=b){category='SEMISeco'.toUpperCase();detail=`Más de ${a}% y hasta ${b}%.`;}else if(pct<=c){category='HÚMEDO';detail=`Más de ${b}% y hasta ${c}%.`;}else{category='MUY HÚMEDO';detail=`Más de ${c}%.`;}document.querySelector('#moisture').textContent=pct.toFixed(2)+'%';document.querySelector('#loss').textContent=`Pérdida de peso: ${(wet-dry).toFixed(2)} g de ${wet.toFixed(2)} g iniciales.`;document.querySelector('#classification').textContent='Clasificación orientativa: '+category;document.querySelector('#classDetail').textContent=detail;box.style.display='block';};
+</script></body></html>
